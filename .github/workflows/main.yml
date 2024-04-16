@@ -1,0 +1,41 @@
+name: Record Dataset Access
+
+on:
+  push:
+    branches:
+      - main  # Adjust branch as needed
+  pull_request:
+    branches:
+      - main  # Adjust branch as needed
+
+jobs:
+  record-access:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v2
+
+      - name: Record access time for JSON file
+        run: |
+          echo "JSON Dataset accessed at: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> dataset_access_log.txt
+          # Example: Use jq to extract specific information from JSON file and append to log
+          # jq '.field1, .field2' dataset.json >> dataset_access_log.txt
+
+      - name: Record access time for CSV file
+        run: |
+          echo "CSV Dataset accessed at: $(date -u +"%Y-%m-%dT%H:%M:%SZ")" >> dataset_access_log.txt
+          # Example: Use csvkit to extract specific information from CSV file and append to log
+          # csvcut -c 1,2 dataset.csv >> dataset_access_log.txt
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add dataset_access_log.txt
+          git commit -m "Record dataset access time" || true
+          git push
+
+
+
+          
